@@ -294,10 +294,12 @@ router.delete(
     (req, res) => {
         Profile.findOneAndDelete({ user: req.user.id })
             .then(() => {
-                User.findOneAndDelete({ _id: req.user.id })
+                //we need to make sure the following promise is returned so it will be waited,
+                //also we can do something like await Profile.findOneAndDelete({ user: req.user.id }) and await User.findOneAndDelete({ _id: req.user.id }) inside a try catch block
+                return User.findOneAndDelete({ _id: req.user.id })
             })
-            .then(res.json({ success: true }))
-            .catch(err => res.json(404).json(err))
+            .then(() => res.json({ success: true }))
+
     })
 
 
